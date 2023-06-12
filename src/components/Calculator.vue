@@ -61,11 +61,7 @@ export default {
     },
     calculate() {
       try {
-        let value = eval(this.display.replace('×', '*').replace('÷', '/'));
-        if(this.memory !== null){
-          value = value.replace(this.memory);
-        }
-        let result = eval(value);
+        let result = eval(this.display.replace('×', '*').replace('÷', '/'));  // *,/の文字を変更 
         this.display = result.toString();
       } catch (error) {
         this.display = 'Error';
