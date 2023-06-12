@@ -32,16 +32,27 @@ export default {
   },
   methods: {
     handleClick(button) {
+      const map = {
+        '+': () => {
+          this.display += '+';
+        },
+        '-': () => {
+          this.display += '-';
+        },
+        'x': () => {
+          this.display += '*';
+        },
+        '÷': () => {
+          this.display += '/';
+        }
+      };
+
+      if (map[button]) {
+        map[button]();
+      }
+
       if (button === '=') {
         this.calculate();
-      } else if (button === '+') {
-        this.addition();
-      } else if (button === '-') {
-        this.subtraction();
-      } else if (button === 'x') {
-        this.multiplication();
-      } else if (button === '÷') {
-        this.division();
       } else if (button === '%') {
         this.percentage();
       } else if (button === 'MC') {
@@ -54,17 +65,11 @@ export default {
         this.memoryDisplay();
       } else if (button === 'MS') {
         this.memorySave();
-      } else if (button === '.') {
-        if (this.display.includes('.')) {
-          return;
-        } else if (this.display === '' && (button === '÷' || button === 'x' || button === '-' || button === '+' || button === '%')) {
-          return;
-        } this.display += button;
       } else {
         this.display += button;
       }
     },
- 
+
     calculate() {
       try {
         const result = new Function(`return ${this.display}`)();
@@ -76,38 +81,6 @@ export default {
     clear() {
       this.display = '';
     },
-    addition() {
-      try {
-        const result = new Function(`return ${this.display}`)();
-        this.display = result.toString();
-      } catch (error) {
-        this.display = 'Error';
-      }
-    },
-    subtraction() {
-      try {
-        const result = new Function(`return ${this.display}`)();
-        this.display = result.toString();
-      } catch (error) {
-        this.display = 'Error';
-      }
-    },
-    multiplication() {
-      try {
-        const result = new Function(`return ${this.display.replace('x', '*')}`)();
-        this.display = result.toString();
-      } catch (error) {
-        this.display = 'Error';
-      }
-    },
-    division() {
-      try {
-        const result = new Function(`return ${this.display.replace('÷', '/')}`)();
-        this.display = result.toString();
-      } catch (error) {
-        this.display = 'Error';
-      }
-    },
     percentage() {
       this.display = (parseFloat(this.display) / 100).toString();
     },
@@ -116,23 +89,21 @@ export default {
     },
     memoryAddition() {
       if (this.display !== '') {
-        this.memory = this.display;
+        this.memory = parseFloat(this.memory || 0) + parseFloat(this.display);
       }
     },
     memorySubtraction() {
-      if (this.display !== null) {
-        let memoryValue = parseFloat(this.memory);
-        let substValue = parseFloat(this.display);
-        this.memory = (memoryValue - substValue).toString();
+      if (this.display !== '') {
+        this.memory = parseFloat(this.memory || 0) - parseFloat(this.display);
       }
     },
     memoryDisplay() {
       if (this.memory !== null) {
-        this.display += this.memory;
+        this.display += this.memory.toString();
       }
     },
     memorySave() {
-      this.memory = this.display;
+      this.memory = parseFloat(this.display);
     },
   },
 };
