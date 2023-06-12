@@ -34,42 +34,49 @@ export default {
     handleClick(button) {
       const map = {
         '+': () => {
-          this.display += '+';
+            this.display += '+';
         },
         '-': () => {
-          this.display += '-';
+            this.display += '-';
         },
         'x': () => {
-          this.display += '*';
+            this.display += 'x';
         },
         '÷': () => {
-          this.display += '/';
-        }
+            this.display += '÷';
+        },
+        'MC': () => {
+          this.memory = null;
+        },
+        'M+': () => {
+          if (this.display !== '') {
+            this.memory = (parseFloat(this.memory) || 0) + parseFloat(this.display);
+          }
+        },
+        'M-': () => {
+          if (this.display !== '') {
+            this.memory = (parseFloat(this.memory) || 0) - parseFloat(this.display);
+          }
+        },
+        'MR': () => {
+          if (this.memory !== null) {
+            this.display += this.memory.toString();
+          }
+        },
+        'MS': () => {
+          this.memory = parseFloat(this.display);
+        },
       };
-
       if (map[button]) {
-        map[button]();
+        map[button].bind(this)();
       }
 
       if (button === '=') {
         this.calculate();
-      } else if (button === '%') {
-        this.percentage();
-      } else if (button === 'MC') {
-        this.memoryClear();
-      } else if (button === 'M+') {
-        this.memoryAddition();
-      } else if (button === 'M-') {
-        this.memorySubtraction();
-      } else if (button === 'MR') {
-        this.memoryDisplay();
-      } else if (button === 'MS') {
-        this.memorySave();
       } else {
         this.display += button;
       }
     },
-
     calculate() {
       try {
         const result = new Function(`return ${this.display}`)();
@@ -81,20 +88,17 @@ export default {
     clear() {
       this.display = '';
     },
-    percentage() {
-      this.display = (parseFloat(this.display) / 100).toString();
-    },
     memoryClear() {
       this.memory = null;
     },
     memoryAddition() {
       if (this.display !== '') {
-        this.memory = parseFloat(this.memory || 0) + parseFloat(this.display);
+        this.memory = (parseFloat(this.memory) || 0) + parseFloat(this.display);
       }
     },
     memorySubtraction() {
       if (this.display !== '') {
-        this.memory = parseFloat(this.memory || 0) - parseFloat(this.display);
+        this.memory = (parseFloat(this.memory) || 0) - parseFloat(this.display);
       }
     },
     memoryDisplay() {
@@ -108,6 +112,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .calculator {
