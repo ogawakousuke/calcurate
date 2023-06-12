@@ -7,8 +7,8 @@
       </button>
       <button class="clear-button" @click="clear">Clear</button>
       <button class="memory-button" @click="memoryClear">MC</button>
-      <button class="memory-button" @click="memoryAddtion">M+</button>
-      <button class="memory-button" @click="memorySubstraction">M-</button>
+      <button class="memory-button" @click="memoryAddition">M+</button>
+      <button class="memory-button" @click="memorySubtraction">M-</button>
       <button class="memory-button" @click="memoryDisplay">MR</button>
       <button class="memory-button" @click="memorySave">MS</button>
     </div>
@@ -24,7 +24,7 @@ export default {
       memory: null,
       buttons: [
         '7', '8', '9', '÷',
-        '4', '5', '6', '×',
+        '4', '5', '6', 'x',
         '1', '2', '3', '-',
         '0', '.', '+', '=', '%',
       ]
@@ -34,34 +34,40 @@ export default {
     handleClick(button) {
       if (button === '=') {
         this.calculate();
-      } else if (button === 'Clear') {
-        this.clear();
+      } else if (button === '+') {
+        this.addition();
+      } else if (button === '-') {
+        this.subtraction();
+      } else if (button === 'x') {
+        this.multiplication();
+      } else if (button === '÷') {
+        this.division();
       } else if (button === '%') {
-        this.display = (parseFloat(this.display) / 100).toString();
-      } else if(button === 'MC'){
+        this.percentage();
+      } else if (button === 'MC') {
         this.memoryClear();
-      } else if(button === 'M+'){
-        this.memoryAddtion();
-      } else if(button === 'M-'){
-        this.memorySubstraction();
-      } else if(button === 'MR'){
+      } else if (button === 'M+') {
+        this.memoryAddition();
+      } else if (button === 'M-') {
+        this.memorySubtraction();
+      } else if (button === 'MR') {
         this.memoryDisplay();
-      } else if(button === 'MS'){
-        this.memoryWriting();
-      } else if (this.display === '' && (button === '÷' || button === '×' || button === '-' || button === '+' || button === '%')) {
-          return;
+      } else if (button === 'MS') {
+        this.memorySave();
       } else if (button === '.') {
         if (this.display.includes('.')) {
           return;
-        }
-        this.display += button;
+        } else if (this.display === '' && (button === '÷' || button === 'x' || button === '-' || button === '+' || button === '%')) {
+          return;
+        } this.display += button;
       } else {
         this.display += button;
       }
     },
+ 
     calculate() {
       try {
-        let result = eval(this.display.replace('×', '*').replace('÷', '/'));  // *,/の文字を変更 
+        const result = new Function(`return ${this.display}`)();
         this.display = result.toString();
       } catch (error) {
         this.display = 'Error';
@@ -70,32 +76,67 @@ export default {
     clear() {
       this.display = '';
     },
-    memoryClear(){
+    addition() {
+      try {
+        const result = new Function(`return ${this.display}`)();
+        this.display = result.toString();
+      } catch (error) {
+        this.display = 'Error';
+      }
+    },
+    subtraction() {
+      try {
+        const result = new Function(`return ${this.display}`)();
+        this.display = result.toString();
+      } catch (error) {
+        this.display = 'Error';
+      }
+    },
+    multiplication() {
+      try {
+        const result = new Function(`return ${this.display.replace('x', '*')}`)();
+        this.display = result.toString();
+      } catch (error) {
+        this.display = 'Error';
+      }
+    },
+    division() {
+      try {
+        const result = new Function(`return ${this.display.replace('÷', '/')}`)();
+        this.display = result.toString();
+      } catch (error) {
+        this.display = 'Error';
+      }
+    },
+    percentage() {
+      this.display = (parseFloat(this.display) / 100).toString();
+    },
+    memoryClear() {
       this.memory = null;
     },
-    memoryAddtion(){
-      if(this.display !== ''){
+    memoryAddition() {
+      if (this.display !== '') {
         this.memory = this.display;
       }
     },
-    memorySubstraction(){
-      if(this.display !== null){
-      let memoryValue = parseFloat(this.memory);
-      let substValue = parseFloat(this.display);
-      this.memory = (memoryValue - substValue).toString();
+    memorySubtraction() {
+      if (this.display !== null) {
+        let memoryValue = parseFloat(this.memory);
+        let substValue = parseFloat(this.display);
+        this.memory = (memoryValue - substValue).toString();
       }
     },
-    memoryDisplay(){
-        if(this.memory !== null)
+    memoryDisplay() {
+      if (this.memory !== null) {
         this.display += this.memory;
+      }
     },
-    memorySave(){
-        this.memory = this.display;
+    memorySave() {
+      this.memory = this.display;
     },
   },
 };
 </script>
-
 
 <style scoped>
 .calculator {
