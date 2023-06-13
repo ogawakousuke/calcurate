@@ -2,15 +2,10 @@
   <div class="calculator">
     <input type="text" v-model="display" readonly>
     <div class="buttons">
-      <button v-for="button in buttons" :key="button" @click="handleClick(button)">
-        {{ button }}
+      <button v-for="(button,index) in buttons" :key="index" @click="handleClick(button)">
+        {{ Array.isArray(button)?button.join(''):button }}
       </button>
       <button class="clear-button" @click="clear">Clear</button>
-      <button class="memory-button" @click="memoryClear">MC</button>
-      <button class="memory-button" @click="memoryAddition">M+</button>
-      <button class="memory-button" @click="memorySubtraction">M-</button>
-      <button class="memory-button" @click="memoryDisplay">MR</button>
-      <button class="memory-button" @click="memorySave">MS</button>
     </div>
   </div>
 </template>
@@ -23,96 +18,79 @@ export default {
       display: '',
       memory: null,
       buttons: [
-        '7', '8', '9', '÷',
-        '4', '5', '6', 'x',
-        '1', '2', '3', '-',
-        '0', '.', '+', '=', '%',
+      'MC', 'M+', 'M-', 'MR',  
+      '7', '8', '9', 'MS',
+      '4', '5', '6', '÷',
+      '1', '2', '3', 'x',
+      '0', '.', '+', '-',
+      '%',"=",
       ]
     };
   },
   methods: {
     handleClick(button) {
-      const map = {
-        '+': () => {
+    const map = {
+    '+': () => {
             this.display += '+';
-        },
-        '-': () => {
+    },
+    '-': () => {
             this.display += '-';
-        },
-        'x': () => {
-            this.display += 'x';
-        },
-        '÷': () => {
-            this.display += '÷';
-        },
-        'MC': () => {
-          this.memory = null;
-        },
-        'M+': () => {
-          if (this.display !== '') {
-            this.memory = (parseFloat(this.memory) || 0) + parseFloat(this.display);
-          }
-        },
-        'M-': () => {
-          if (this.display !== '') {
-            this.memory = (parseFloat(this.memory) || 0) - parseFloat(this.display);
-          }
-        },
-        'MR': () => {
-          if (this.memory !== null) {
-            this.display += this.memory.toString();
-          }
-        },
-        'MS': () => {
-          this.memory = parseFloat(this.display);
-        },
-      };
-      if (map[button]) {
-        map[button].bind(this)();
-      }
-
-      if (button === '=') {
-        this.calculate();
-      } else {
-        this.display += button;
-      }
     },
-    calculate() {
-      try {
-        const result = new Function(`return ${this.display}`)();
-        this.display = result.toString();
-      } catch (error) {
-        this.display = 'Error';
-      }
+    'x': () => {
+            
+            this.display += '*';
     },
-    clear() {
-      this.display = '';
+    '÷': () => {
+            this.display += '/';
     },
-    memoryClear() {
+    'MC': () => {
       this.memory = null;
     },
-    memoryAddition() {
+    'M+': () => {
       if (this.display !== '') {
         this.memory = (parseFloat(this.memory) || 0) + parseFloat(this.display);
       }
     },
-    memorySubtraction() {
+    'M-': () => {
       if (this.display !== '') {
         this.memory = (parseFloat(this.memory) || 0) - parseFloat(this.display);
       }
     },
-    memoryDisplay() {
+    'MR': () => {
       if (this.memory !== null) {
         this.display += this.memory.toString();
       }
     },
-    memorySave() {
+    'MS': () => {
       this.memory = parseFloat(this.display);
+    },
+    'clear': () => {
+      this.display = '';
+    },
+  };
+
+  if (map[button]) {
+    map[button]();
+  } else if (button === '=') {
+    this.calculate();
+  } else {
+    this.display += button;
+  }
+},
+calculate() {
+  try {
+    const result = new Function(`return ${this.display}`)();
+    this.display = result.toString();
+  } catch (error) {
+    this.display = 'Error';
+  }
+},
+    clear() {
+      this.display = '';
     },
   },
 };
 </script>
-
 
 <style scoped>
 .calculator {
@@ -134,16 +112,17 @@ input {
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
+  gap: 10px;
 }
 
 button {
   width: 100%;
-  height: 40px;
-  background-color: #eee;
-  border: none;
+  height: 50px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -153,6 +132,7 @@ button:hover {
 }
 
 .clear-button {
+  grid-column: span 2;
   background-color: #f44336;
   color: white;
 }
